@@ -3,6 +3,7 @@ leftWristX = 0 ;
 leftWristY = 0 ;
 rightWristX = 0 ;
 rightWristY = 0 ;
+scoreLeftWrist = 0 ;
 
 function preload() {
     song = loadSound("music.mp3") ;
@@ -23,20 +24,11 @@ function modelLoaded() {
     console.log("PoseNet Is Initialised") ;
 }
 
-function draw() {
-    background('white') ;
-    image(video , 0 , 0 , 425 , 300) ;
-}
-
-function play() {
-    song.play() ;
-    song.setVolume(1) ;
-    song.rate(1) ;
-}
-
 function gotPoses(results) {
     if(results.length > 0) {
         console.log(results) ;
+        scoreLeftWrist = results[0].pose.keypoints[9].score ;
+        console.log("scoreLeftWrist = " + scoreLeftWrist) ;
 
         leftWristX = results[0].pose.leftWrist.x ;
         leftWristY = results[0].pose.leftWrist.y ;
@@ -46,4 +38,25 @@ function gotPoses(results) {
         rightWristY = results[0].pose.rightWrist.y ;
         console.log("Right Wrist X = " + rightWristX + " Right Wrist Y = " + rightWristY) ;
     }
+}
+
+function draw() {
+    image(video , 0 , 0 , 425 , 300) ;
+    fill('#F94449') ;
+    stroke('#F94449') ;
+
+    if(scoreLeftWrist > 0.2) {
+    circle(leftWristX , leftWristY , 20) ;
+    InNumberLeftWristY = Number(leftWristY) ;
+    remove_decimals = floor(InNumberLeftWristY) ;
+    volume = remove_decimals/500 ;
+    document.getElementById("volume").innerHTML = "Volume = " + volume ;
+    song.setVolume(volume) ;
+    }
+}
+
+function play() {
+    song.play() ;
+    song.setVolume(1) ;
+    song.rate(1) ;
 }
